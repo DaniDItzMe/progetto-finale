@@ -1,0 +1,36 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <th:block
+    th:if="${console}"
+    th:replace="~{fragments/fragment :: header(${edit} ? 'Edit ' + ${console?.name} : 'Add new genre')}"
+  >
+  </th:block>
+  <th:block
+    th:unless="${console}"
+    th:replace="~{fragments/fragment :: header('Not found')}"
+  >
+  </th:block>
+
+  <body>
+    <header>
+      <th:block th:replace="~{fragments/fragment :: navbar}"> </th:block>
+    </header>
+
+    <main class="container pt-5 my-5">
+      <h1 th:if="${!edit}" class="my-5 text-center">Add a new console</h1>
+      <h1 th:if="${edit}" class="my-5 text-center">
+        Edit [[${console?.name}]]
+      </h1>
+
+      <div th:if="${console}" class="d-flex justify-content-center">
+        <th:block
+          th:replace="~{fragments/fragment :: createEditConsolesForm(${edit ? '/consoles/edit/' + console.id : '/consoles/create'}, ${edit})}"
+        ></th:block>
+      </div>
+
+      <div th:unless="${console}">
+        <h1 class="text-center fw-bold text-danger">Console not found!</h1>
+      </div>
+    </main>
+  </body>
+</html>

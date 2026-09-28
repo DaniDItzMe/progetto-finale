@@ -1,0 +1,139 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <th:block th:replace="~{fragments/fragment :: header('Home')}"> </th:block>
+
+  <body>
+    <header>
+      <th:block th:replace="~{fragments/fragment :: navbar}"> </th:block>
+    </header>
+
+    <main class="container pt-5 my-5">
+      <h1 class="my-5 text-center">
+        Welcome back
+        <span class="text-capitalize" sec:authentication="name"></span>
+        <span
+          sec:authorize="hasAuthority('ADMIN')"
+          sec:authentication="principal.authorities"
+        ></span>
+        !
+      </h1>
+      <h2 class="my-5 text-center">Explore our games!</h2>
+
+      <div
+        th:unless="${searchParam}"
+        class="d-flex justify-content-end me-3 mb-3"
+      >
+        <a
+          class="btn btn-dark"
+          th:href="@{/create}"
+          sec:authorize="hasAuthority('ADMIN')"
+          >Add new game</a
+        >
+      </div>
+      <table th:if="${games.size() > 0}" class="table table-striped">
+        <thead>
+          <tr class="text-center">
+            <th scope="col">Cover</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th sec:authorize="hasAuthority('ADMIN')">Actions</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="text-center gameCard"
+            th:each=" game: ${games}"
+            th:object="${game}"
+            th:onclick="|location.href='@{/show/{id}(id=*{id})}'|"
+          >
+            <td class="align-middle">
+              <img
+                class="img-fluid"
+                style="width: 300px; height: 150px; object-fit: contain"
+                th:src="@{/image/{id}(id = *{id})}"
+                th:alt="*{image}"
+              />
+            </td>
+            <td class="align-middle">[[*{name}]]</td>
+            <td class="align-middle">[[*{description}]]</td>
+            <td class="align-middle fw-bold">[[*{price}]]€</td>
+            <td class="align-middle">
+              <a
+                class="btn btn-primary"
+                th:href="@{/edit/{id}(id=*{id})}"
+                onclick="event.stopPropagation()"
+                sec:authorize="hasAuthority('ADMIN')"
+                >Edit</a
+              >
+            </td>
+            <td class="align-middle">
+              <button
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                th:data-bs-target="'#delete-modal-' + *{id}"
+                onclick="event.stopPropagation()"
+                sec:authorize="hasAuthority('ADMIN')"
+              >
+                Delete
+              </button>
+            </td>
+            <div
+              class="modal fade"
+              th:id="'delete-modal-' + *{id}"
+              tabindex="-1"
+              aria-labelledby="delete-modal"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                      Delete [[*{name}]]
+                    </h1>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete [[*{name}]]?
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <form th:action="@{/delete/{id}(id=*{id})}" method="post">
+                      <button type="submit" class="btn btn-danger">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <td class="align-middle"></td>
+          </tr>
+        </tbody>
+      </table>
+      <h1
+        th:unless="${games.size() > 0}"
+        class="text-danger fw-bold text-center"
+      >
+        No game found with title "[[${searchParam}]]"
+      </h1>
+    </main>
+
+    <script
+      th:src="@{/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js}"
+    ></script>
+  </body>
+</html>

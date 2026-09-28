@@ -1,0 +1,93 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <th:block
+    th:replace="~{fragments/fragment :: header(${game} ? ${game.name} : 'Not found')}"
+  >
+  </th:block>
+
+  <body>
+    <header>
+      <th:block th:replace="~{fragments/fragment :: navbar}"> </th:block>
+    </header>
+
+    <main class="container pt-5 my-5">
+      <h1 class="my-5 text-center">Product Details</h1>
+
+      <div th:if="${game}" class="card" th:object="${game}">
+        <h5 class="card-header py-3">[[*{name}]]</h5>
+        <div class="card-body">
+          <div class="d-flex gap-4">
+            <div>
+              <img
+                class="img-fluid rounded-2"
+                style="width: auto; height: 500px; object-fit: fill"
+                th:src="@{/image/{id}(id = *{id})}"
+                th:alt="*{name}"
+              />
+            </div>
+            <div class="d-flex flex-column">
+              <div class="mb-3">
+                <h4>Description</h4>
+                <p class="card-text">[[*{description}]]</p>
+              </div>
+
+              <div class="mb-3">
+                <h6 class="d-inline">Genres:</h6>
+                <ul th:if="*{availableConsoles.size() > 0}">
+                  <li th:each="genre : *{genres}" class="card-text">
+                    [[${genre.name}]]
+                  </li>
+                </ul>
+
+                <p th:unless="*{genres.size() > 0}" class="card-text d-inline">
+                  N/A
+                </p>
+              </div>
+
+              <div class="mb-3">
+                <h6 class="d-inline">Developer:</h6>
+                <p class="card-text d-inline">[[*{developer}]]</p>
+              </div>
+
+              <div class="mb-3">
+                <h6 class="d-inline">Publisher:</h6>
+                <p class="card-text d-inline">[[*{publisher}]]</p>
+              </div>
+
+              <div class="mb-3">
+                <h6 class="d-inline">Available on:</h6>
+                <ul th:if="*{availableConsoles.size() > 0}">
+                  <li
+                    th:each="console : *{availableConsoles}"
+                    class="card-text"
+                  >
+                    [[${console.name}]]
+                  </li>
+                </ul>
+                <p
+                  th:unless="*{availableConsoles.size() > 0}"
+                  class="card-text d-inline"
+                >
+                  N/A
+                </p>
+              </div>
+
+              <div
+                class="d-flex justify-content-end align-items-end flex-grow-1"
+              >
+                <div class="btn btn-success rounded-pill px-4 py-3">
+                  <h4 class="fw-bold d-inline">Price:</h4>
+                  <h5 class="d-inline">[[*{price}]]€</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div th:unless="${game}">
+        <h1 class="text-center text-danger fw-bold">Game not found!</h1>
+      </div>
+    </main>
+  </body>
+</html>

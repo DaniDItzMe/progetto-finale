@@ -1,0 +1,34 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <th:block
+    th:if="${genre}"
+    th:replace="~{fragments/fragment :: header(${edit} ? 'Edit ' + ${genre?.name} : 'Add new genre')}"
+  >
+  </th:block>
+  <th:block
+    th:unless="${game}"
+    th:replace="~{fragments/fragment :: header('Not found')}"
+  >
+  </th:block>
+
+  <body>
+    <header>
+      <th:block th:replace="~{fragments/fragment :: navbar}"> </th:block>
+    </header>
+
+    <main class="container pt-5 my-5">
+      <h1 th:if="${!edit}" class="my-5 text-center">Add a new genre</h1>
+      <h1 th:if="${edit}" class="my-5 text-center">Edit [[${genre?.name}]]</h1>
+
+      <div th:if="${genre}" class="d-flex justify-content-center">
+        <th:block
+          th:replace="~{fragments/fragment :: createEditGenresForm(${edit ? '/genres/edit/' + genre.id : '/genres/create'}, ${edit})}"
+        ></th:block>
+      </div>
+
+      <div th:unless="${genre}">
+        <h1 class="text-center fw-bold text-danger">Genre not found!</h1>
+      </div>
+    </main>
+  </body>
+</html>

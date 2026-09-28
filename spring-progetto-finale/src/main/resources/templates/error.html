@@ -1,0 +1,20 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <th:block th:replace="~{fragments/fragment :: header('Error')}"></th:block>
+
+  <body data-bs-theme="dark">
+    <header>
+      <th:block th:replace="~{fragments/fragment :: navbar}"></th:block>
+    </header>
+
+    <main class="container text-center my-5 pt-5">
+      <h1 class="text-danger fw-bold mb-3">ERRORE CRITICO</h1>
+
+      <h3 class="mb-3" th:text="${error}"></h3>
+      <h4 class="mb-3" th:text="${message}"></h4>
+      <p class="mb-3" th:text="${trace}"></p>
+
+      <a class="btn btn-secondary" th:href="@{/}">Torna alla home</a>
+    </main>
+  </body>
+</html>
