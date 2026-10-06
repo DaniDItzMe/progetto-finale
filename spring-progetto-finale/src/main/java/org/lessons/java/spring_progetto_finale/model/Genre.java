@@ -3,6 +3,7 @@ package org.lessons.java.spring_progetto_finale.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +25,7 @@ public class Genre {
     private String name;
 
     @ManyToMany(mappedBy = "genres")
-    @JsonBackReference
+    @JsonIgnoreProperties("genres")
     private List<Game> games;
 
     public Integer getId() {

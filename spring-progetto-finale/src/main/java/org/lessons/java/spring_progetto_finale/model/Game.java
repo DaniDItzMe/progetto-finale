@@ -3,6 +3,9 @@ package org.lessons.java.spring_progetto_finale.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,11 +55,13 @@ public class Game {
     @ManyToMany()
     @JoinTable(name = "game_genre", joinColumns = @JoinColumn(name = "game_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
     @NotEmpty(message = "You must select at least one genre")
+    @JsonIgnoreProperties("games")
     private List<Genre> genres;
 
     @ManyToMany()
     @JoinTable(name = "console_game", joinColumns = @JoinColumn(name = "game_id"), inverseJoinColumns = @JoinColumn(name = "console_id"))
     @NotEmpty(message = "You must select at least one console")
+    @JsonIgnoreProperties("games")
     private List<Console> availableConsoles;
 
     public Integer getId() {

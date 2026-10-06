@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ public class Console {
     private BigDecimal price;
 
     @ManyToMany(mappedBy = "availableConsoles")
-    @JsonBackReference
+    @JsonIgnoreProperties("availableConsoles")
     private List<Game> games;
 
     public Integer getId() {
