@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,8 +18,7 @@ public class UsersService {
 
         }
 
-        String role = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).findFirst()
-                .orElse(null);
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
 
         return ResponseEntity.ok(Map.of("authenticated", authentication.isAuthenticated(), "username",
                 authentication.getName(), "role", role));
