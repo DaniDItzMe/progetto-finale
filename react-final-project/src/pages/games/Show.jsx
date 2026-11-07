@@ -7,13 +7,18 @@ export function Show() {
   const [game, setGame] = useState();
 
   const { id } = useParams();
-  const server = import.meta.env.VITE_SERVER_ROOT;
 
   useEffect(() => {
-    api.get(`/api/games/get/${id}`).then((response) => {
-      console.log(response.data);
-      setGame(response.data);
-    });
+    api
+      .get(`/api/games/get/${id}`)
+      .then((response) => {
+        console.log(response.status);
+        setGame(response.data);
+      })
+      .catch((err) => {
+        console.log(err.status);
+        setGame(null);
+      });
   }, []);
 
   return (

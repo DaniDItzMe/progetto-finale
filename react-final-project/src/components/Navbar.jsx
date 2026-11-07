@@ -1,42 +1,6 @@
-import api from "../axios";
-import { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useLoginContext } from "../contexts/LoginContext";
+import { NavLink } from "react-router-dom";
 
 export function Navbar() {
-  const navigate = useNavigate();
-
-  const { logged, setLogged, auth, setAuth, setLoading } = useLoginContext();
-  const server = import.meta.env.VITE_SERVER_ROOT;
-
-  useEffect(() => {
-    console.log("WAITING FOR AUTHENTICATION");
-    setLoading(true);
-
-    api
-      .get(`/api/auth`, { withCredentials: true })
-      .then((response) => {
-        console.log(response.data);
-
-        setAuth(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [logged]);
-
-  const handleLogout = (e) => {
-    e.preventDefault();
-
-    api.post(`/logout`, null, { withCredentials: true }).then((response) => {
-      console.log(response);
-      setLogged(false);
-      navigate("/logout");
-    });
-  };
-
   return (
     <>
       <nav
@@ -65,18 +29,16 @@ export function Navbar() {
                   Home
                 </NavLink>
               </li>
-              {auth?.role == "ADMIN" && (
-                <li className="nav-item">
-                  <NavLink
-                    className="nav-link"
-                    aria-current="page"
-                    to="/genres"
-                    end
-                  >
-                    Genres
-                  </NavLink>
-                </li>
-              )}
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  aria-current="page"
+                  to="/genres"
+                  end
+                >
+                  Genres
+                </NavLink>
+              </li>
               <li className="nav-item">
                 <NavLink
                   className="nav-link"
@@ -101,27 +63,6 @@ export function Navbar() {
                 Search
               </button>
             </form>
-
-            {auth.authenticated && (
-              <button
-                onClick={(e) => {
-                  handleLogout(e);
-                  setLogged(true);
-                }}
-                className="btn btn-danger ms-3"
-              >
-                Logout
-              </button>
-            )}
-
-            {!auth.authenticated && (
-              <button
-                className="btn btn-success ms-3"
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </button>
-            )}
           </div>
         </div>
       </nav>

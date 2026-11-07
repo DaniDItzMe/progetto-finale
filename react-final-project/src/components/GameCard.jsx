@@ -6,7 +6,7 @@ export function GameCard({ game }) {
       <div className="card">
         <h5 className="card-header py-3">{game.name}</h5>
         <div className="card-body">
-          <div className="d-flex gap-4">
+          <div className="d-flex gap-4 ">
             <div>
               <img
                 className="img-fluid rounded-2"
@@ -15,7 +15,7 @@ export function GameCard({ game }) {
                 alt={game.name}
               />
             </div>
-            <div className="d-flex flex-column">
+            <div className="d-flex flex-column flex-grow-1">
               <div className="mb-3">
                 <h4>Description</h4>
                 <p className="card-text">{game.description}</p>
@@ -71,7 +71,7 @@ export function GameCard({ game }) {
                 )}
               </div>
 
-              <div className="d-flex justify-content-end align-items-end flex-grow-1">
+              <div className="d-flex justify-content-center align-items-center flex-grow-1">
                 <div className="btn btn-success rounded-pill px-4 py-3">
                   <h4 className="fw-bold d-inline">Price: </h4>
                   <h5 className="d-inline">{game.price}€</h5>

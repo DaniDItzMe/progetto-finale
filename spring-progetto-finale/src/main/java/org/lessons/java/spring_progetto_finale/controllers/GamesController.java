@@ -2,14 +2,13 @@ package org.lessons.java.spring_progetto_finale.controllers;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import org.lessons.java.spring_progetto_finale.model.Console;
 import org.lessons.java.spring_progetto_finale.model.Game;
 import org.lessons.java.spring_progetto_finale.model.Genre;
-import org.lessons.java.spring_progetto_finale.repositories.ConsolesRepo;
-import org.lessons.java.spring_progetto_finale.repositories.GamesRepo;
-import org.lessons.java.spring_progetto_finale.repositories.GenresRepo;
+import org.lessons.java.spring_progetto_finale.service.ConsolesService;
+import org.lessons.java.spring_progetto_finale.service.GamesService;
+import org.lessons.java.spring_progetto_finale.service.GenresService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,25 +24,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/")
 public class GamesController {
 
     @Autowired
-    private GamesRepo gameRepo;
+    private GamesService gamesService;
 
     @Autowired
-    private GenresRepo genreRepo;
+    private GenresService genresService;
 
     @Autowired
-    private ConsolesRepo consoleRepo;
+    private ConsolesService consolesService;
 
     @GetMapping
     public String index(Model model) {
 
-        List<Game> games = gameRepo.findAll();
+        List<Game> games = gamesService.getAll();
 
         model.addAttribute("games", games);
 
@@ -54,7 +52,7 @@ public class GamesController {
     @GetMapping("/show/{id}")
     public String show(@PathVariable Integer id, Model model) {
 
-        Game game = gameRepo.findById(id).orElse(null);
+        Game game = gamesService.getById(id).orElse(null);
 
         model.addAttribute("game", game);
 
@@ -65,8 +63,8 @@ public class GamesController {
     public String create(Model model) {
 
         Game game = new Game();
-        List<Genre> genresList = genreRepo.findAll();
-        List<Console> consolesList = consoleRepo.findAll();
+        List<Genre> genresList = genresService.getAll();
+        List<Console> consolesList = consolesService.getAll();
 
         model.addAttribute("game", game);
         model.addAttribute("genresList", genresList);
@@ -82,8 +80,8 @@ public class GamesController {
 
         if (bindingResult.hasErrors()) {
 
-            List<Genre> genresList = genreRepo.findAll();
-            List<Console> consolesList = consoleRepo.findAll();
+            List<Genre> genresList = genresService.getAll();
+            List<Console> consolesList = consolesService.getAll();
             model.addAttribute("genresList", genresList);
             model.addAttribute("consolesList", consolesList);
             model.addAttribute("edit", false);
@@ -94,11 +92,7 @@ public class GamesController {
 
         }
 
-        if (!image.isEmpty()) {
-            game.setImage(image.getBytes());
-        }
-
-        gameRepo.save(game);
+        gamesService.store(game, image);
 
         return "redirect:/";
     }
@@ -106,9 +100,9 @@ public class GamesController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
 
-        Game game = gameRepo.findById(id).orElse(null);
-        List<Genre> genresList = genreRepo.findAll();
-        List<Console> consolesList = consoleRepo.findAll();
+        Game game = gamesService.getById(id).orElse(null);
+        List<Genre> genresList = genresService.getAll();
+        List<Console> consolesList = consolesService.getAll();
         model.addAttribute("game", game);
         model.addAttribute("genresList", genresList);
         model.addAttribute("consolesList", consolesList);
@@ -124,8 +118,8 @@ public class GamesController {
 
         if (bindingResult.hasErrors()) {
 
-            List<Genre> genresList = genreRepo.findAll();
-            List<Console> consolesList = consoleRepo.findAll();
+            List<Genre> genresList = genresService.getAll();
+            List<Console> consolesList = consolesService.getAll();
             model.addAttribute("genresList", genresList);
             model.addAttribute("consolesList", consolesList);
             model.addAttribute("edit", true);
@@ -135,29 +129,16 @@ public class GamesController {
             return "games/create-edit";
 
         }
-        if (!image.isEmpty() && image != null) {
 
-            game.setImage(image.getBytes());
-
-        } else {
-
-            Game originalGame = gameRepo.findById(id).get();
-            game.setImage(originalGame.getImage());
-        }
-        gameRepo.save(game);
+        gamesService.update(game, image);
 
         return "redirect:/";
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id, Model model) {
+    public String delete(@PathVariable Integer id) {
 
-        Game gameToDelete = gameRepo.findById(id).get();
-
-        gameToDelete.getAvailableConsoles().clear();
-        gameToDelete.getGenres().clear();
-
-        gameRepo.deleteById(id);
+        gamesService.deleteById(id);
 
         return "redirect:/";
     }
@@ -165,7 +146,7 @@ public class GamesController {
     @GetMapping("/search")
     public String search(@RequestParam String search, Model model) {
 
-        List<Game> searchedGame = gameRepo.findByNameContaining(search);
+        List<Game> searchedGame = gamesService.getByName(search);
 
         model.addAttribute("games", searchedGame);
         model.addAttribute("searchParam", search);
@@ -177,7 +158,7 @@ public class GamesController {
     @GetMapping("/image/{id}")
     public void getImage(@PathVariable Integer id, HttpServletResponse response) throws IOException {
 
-        Game game = gameRepo.findById(id).orElse(null);
+        Game game = gamesService.getById(id).orElse(null);
 
         response.getOutputStream().write(game.getImage());
     }

@@ -7,8 +7,6 @@ import org.lessons.java.spring_progetto_finale.model.Game;
 import org.lessons.java.spring_progetto_finale.model.Genre;
 import org.lessons.java.spring_progetto_finale.repositories.GenresRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,36 +15,28 @@ public class GenresService {
     @Autowired
     private GenresRepo genreRepo;
 
-    public ResponseEntity<List<Genre>> getAll() {
+    public List<Genre> getAll() {
 
         List<Genre> genres = genreRepo.findAll();
 
-        return new ResponseEntity<List<Genre>>(genres, HttpStatus.OK);
+        return genres;
     }
 
-    public ResponseEntity<Genre> getById(Integer id) {
+    public Optional<Genre> getById(Integer id) {
 
         Optional<Genre> genre = genreRepo.findById(id);
 
-        if (genre.isEmpty()) {
-
-            return new ResponseEntity<Genre>(HttpStatus.NOT_FOUND);
-
-        }
-
-        return new ResponseEntity<Genre>(genre.get(), HttpStatus.OK);
+        return genre;
 
     }
 
-    public ResponseEntity<Genre> storeOrUpdate(Genre genre) {
+    public Genre storeOrUpdate(Genre genre) {
 
-        genreRepo.save(genre);
-
-        return new ResponseEntity<Genre>(HttpStatus.OK);
+        return genreRepo.save(genre);
 
     }
 
-    public ResponseEntity<Genre> deleteById(Integer id) {
+    public void deleteById(Integer id) {
 
         Genre genreToDelete = genreRepo.findById(id).get();
 
@@ -57,8 +47,6 @@ public class GenresService {
         }
 
         genreRepo.delete(genreToDelete);
-
-        return new ResponseEntity<Genre>(HttpStatus.OK);
 
     }
 

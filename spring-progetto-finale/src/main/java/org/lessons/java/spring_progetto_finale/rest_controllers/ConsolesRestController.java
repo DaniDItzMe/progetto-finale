@@ -1,29 +1,21 @@
 package org.lessons.java.spring_progetto_finale.rest_controllers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.lessons.java.spring_progetto_finale.model.Console;
 import org.lessons.java.spring_progetto_finale.model.Game;
 import org.lessons.java.spring_progetto_finale.service.ConsolesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 @RestController
+@CrossOrigin
 @RequestMapping("/api/consoles")
 public class ConsolesRestController {
 
@@ -33,71 +25,32 @@ public class ConsolesRestController {
     @GetMapping
     public ResponseEntity<List<Console>> index() {
 
-        return consoleService.getAll();
+        if (consoleService.getAll().isEmpty()) {
+            return new ResponseEntity<List<Console>>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<List<Console>>(consoleService.getAll(), HttpStatus.OK);
 
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<Console> getById(@PathVariable Integer id) {
 
-        System.out.println("Backend consoles");
-
-        return consoleService.getById(id);
-    }
-
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<?> edit(@Valid @RequestBody Console console, BindingResult bindingResult,
-            @PathVariable Integer id) {
-
-        System.out.println(console.getName());
-        System.out.println(console.getDescription());
-        System.out.println(console.getPrice());
-
-        if (bindingResult.hasErrors()) {
-
-            Map<String, String> errors = new HashMap<>();
-
-            bindingResult.getFieldErrors().forEach(err -> {
-                errors.put(err.getField(), err.getDefaultMessage());
-            });
-
-            return ResponseEntity.badRequest().body(errors);
+        if (consoleService.getById(id).isEmpty()) {
+            return new ResponseEntity<Console>(HttpStatus.NOT_FOUND);
 
         }
-
-        return consoleService.storeOrUpdate(console);
-
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<?> store(@Valid @RequestBody Console console, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-
-            Map<String, String> errors = new HashMap<>();
-
-            bindingResult.getFieldErrors().forEach(err -> {
-                errors.put(err.getField(), err.getDefaultMessage());
-            });
-
-            return ResponseEntity.badRequest().body(errors);
-
-        }
-
-        return consoleService.storeOrUpdate(console);
+        return new ResponseEntity<Console>(consoleService.getById(id).get(), HttpStatus.OK);
     }
 
     @GetMapping("/getGames/{id}")
     public ResponseEntity<List<Game>> getGames(@PathVariable Integer id) {
 
-        return consoleService.getGames(id);
+        if (consoleService.getGames(id).isEmpty()) {
+            return new ResponseEntity<List<Game>>(HttpStatus.NOT_FOUND);
+        }
 
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Console> delete(@PathVariable Integer id) {
-
-        return consoleService.deleteById(id);
+        return new ResponseEntity<List<Game>>(consoleService.getGames(id), HttpStatus.OK);
 
     }
 

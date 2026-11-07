@@ -1,12 +1,11 @@
 package org.lessons.java.spring_progetto_finale.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.lessons.java.spring_progetto_finale.model.Console;
 import org.lessons.java.spring_progetto_finale.model.Game;
-import org.lessons.java.spring_progetto_finale.repositories.ConsolesRepo;
-import org.lessons.java.spring_progetto_finale.repositories.GamesRepo;
+import org.lessons.java.spring_progetto_finale.service.ConsolesService;
+import org.lessons.java.spring_progetto_finale.service.GamesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,25 +15,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/consoles")
 public class ConsolesController {
 
     @Autowired
-    private ConsolesRepo consoleRepo;
+    private ConsolesService consolesService;
 
     @Autowired
-    private GamesRepo gameRepo;
+    private GamesService gamesService;
 
     @GetMapping
     public String index(Model model) {
 
-        List<Console> consoles = consoleRepo.findAll();
+        List<Console> consoles = consolesService.getAll();
         model.addAttribute("consoles", consoles);
         return "consoles/index";
     }
@@ -42,8 +38,8 @@ public class ConsolesController {
     @GetMapping("/show/{id}")
     public String show(@PathVariable Integer id, Model model) {
 
-        Console console = consoleRepo.findById(id).get();
-        List<Game> gamesByConsole = gameRepo.findByAvailableConsoles(console);
+        Console console = consolesService.getById(id).orElse(null);
+        List<Game> gamesByConsole = gamesService.getByConsole(console);
 
         model.addAttribute("gamesByConsole", gamesByConsole);
         model.addAttribute("console", console);
@@ -74,7 +70,7 @@ public class ConsolesController {
 
         }
 
-        consoleRepo.save(console);
+        consolesService.storeOrUpdate(console);
 
         return "redirect:/consoles";
     }
@@ -82,7 +78,7 @@ public class ConsolesController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
 
-        Console console = consoleRepo.findById(id).orElse(null);
+        Console console = consolesService.getById(id).orElse(null);
 
         model.addAttribute("console", console);
         model.addAttribute("edit", true);
@@ -104,7 +100,7 @@ public class ConsolesController {
 
         }
 
-        consoleRepo.save(console);
+        consolesService.storeOrUpdate(console);
 
         return "redirect:/consoles";
 
@@ -113,15 +109,7 @@ public class ConsolesController {
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable Integer id) {
 
-        Console consoleToDelete = consoleRepo.findById(id).get();
-
-        for (Game game : consoleToDelete.getGames()) {
-
-            game.getAvailableConsoles().remove(consoleToDelete);
-
-        }
-
-        consoleRepo.delete(consoleToDelete);
+        consolesService.deleteById(id);
 
         return "redirect:/consoles";
     }

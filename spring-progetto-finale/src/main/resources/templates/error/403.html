@@ -1,0 +1,18 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <th:block th:replace="~{fragments/fragment :: header('Error')}"></th:block>
+
+  <body>
+    <header>
+      <th:block th:replace="~{fragments/fragment :: navbar}"></th:block>
+    </header>
+
+    <main class="container text-center my-5 pt-5">
+      <h1 class="text-danger fw-bold mb-3">ERROR 403 FORBIDDEN</h1>
+
+      <h3 class="mb-3">Accesso vietato</h3>
+
+      <a class="btn btn-secondary" th:href="@{/}">Torna alla home</a>
+    </main>
+  </body>
+</html>

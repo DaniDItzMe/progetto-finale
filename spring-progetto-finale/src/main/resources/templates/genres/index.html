@@ -10,7 +10,10 @@
     <main class="container my-5 pt-5">
       <h1 class="text-center">Explore genres!</h1>
 
-      <div class="d-flex justify-content-end me-3 mb-3">
+      <div
+        class="d-flex justify-content-end me-3 mb-3"
+        sec:authorize="hasAuthority('ADMIN')"
+      >
         <a class="btn btn-dark" th:href="@{/genres/create}">Add new genre</a>
       </div>
       <table th:if="${genres.size() > 0}" class="table table-striped">
@@ -18,8 +21,8 @@
           <tr class="text-center">
             <th scope="col">Id</th>
             <th scope="col">Genre</th>
-            <th>Actions</th>
-            <th></th>
+            <th sec:authorize="hasAuthority('ADMIN')">Actions</th>
+            <th sec:authorize="hasAuthority('ADMIN')"></th>
           </tr>
         </thead>
         <tbody>
@@ -29,15 +32,15 @@
             th:object="${genre}"
           >
             <td class="align-middle">[[*{id}]]</td>
-            <td class="align-middle fw-bold">[[*{name}]]</td>
-            <td class="align-middle">
+            <td class="align-middle">[[*{name}]]</td>
+            <td class="align-middle" sec:authorize="hasAuthority('ADMIN')">
               <a
                 class="btn btn-primary"
                 th:href="@{/genres/edit/{id}(id=*{id})}"
                 >Edit</a
               >
             </td>
-            <td class="align-middle">
+            <td class="align-middle" sec:authorize="hasAuthority('ADMIN')">
               <button
                 class="btn btn-danger"
                 data-bs-toggle="modal"

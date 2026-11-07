@@ -1,16 +1,13 @@
 package org.lessons.java.spring_progetto_finale.service;
 
-import java.lang.classfile.ClassFile.Option;
 import java.util.List;
 import java.util.Optional;
 
 import org.lessons.java.spring_progetto_finale.model.Console;
 import org.lessons.java.spring_progetto_finale.model.Game;
-import org.lessons.java.spring_progetto_finale.model.Genre;
 import org.lessons.java.spring_progetto_finale.repositories.ConsolesRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,50 +16,42 @@ public class ConsolesService {
     @Autowired
     private ConsolesRepo consoleRepo;
 
-    public ResponseEntity<List<Console>> getAll() {
+    public List<Console> getAll() {
 
         List<Console> consoles = consoleRepo.findAll();
 
-        return new ResponseEntity<List<Console>>(consoles, HttpStatus.OK);
+        return consoles;
 
     }
 
-    public ResponseEntity<Console> getById(Integer id) {
+    public Optional<Console> getById(Integer id) {
 
         Optional<Console> console = consoleRepo.findById(id);
 
-        if (console.isEmpty()) {
-
-            return new ResponseEntity<Console>(HttpStatus.NOT_FOUND);
-
-        }
-
-        return new ResponseEntity<Console>(console.get(), HttpStatus.OK);
+        return console;
     }
 
-    public ResponseEntity<Console> storeOrUpdate(Console console) {
+    public Console storeOrUpdate(Console console) {
 
-        consoleRepo.save(console);
-
-        return new ResponseEntity<Console>(HttpStatus.OK);
+        return consoleRepo.save(console);
 
     }
 
-    public ResponseEntity<List<Game>> getGames(Integer id) {
+    public List<Game> getGames(Integer id) {
 
         Optional<Console> console = consoleRepo.findById(id);
+        List<Game> games = null;
+        if (!console.isEmpty()) {
 
-        if (console.isEmpty()) {
-
-            return new ResponseEntity<List<Game>>(HttpStatus.NOT_FOUND);
+            games = console.get().getGames();
 
         }
 
-        return new ResponseEntity<List<Game>>(console.get().getGames(), HttpStatus.OK);
+        return games;
 
     }
 
-    public ResponseEntity<Console> deleteById(Integer id) {
+    public void deleteById(Integer id) {
 
         Console consoleToDelete = consoleRepo.findById(id).get();
 
@@ -73,8 +62,6 @@ public class ConsolesService {
         }
 
         consoleRepo.delete(consoleToDelete);
-
-        return new ResponseEntity<Console>(HttpStatus.OK);
 
     }
 
