@@ -42,7 +42,6 @@ public class Game {
     private String publisher;
 
     @Lob
-    // @NotEmpty(message = "You must insert a cover image")
     private byte[] image;
 
     @NotNull(message = "The game must have a price")
